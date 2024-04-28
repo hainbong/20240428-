@@ -1,0 +1,76 @@
+
+<html>
+<head>
+<TITLE>postmessage_sample</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=bbaafdfea8ef77db99b023b7e069a24a"></script>
+<script type="text/javascript">
+	
+	
+	// 넥사로부터 메시지 수신
+	function receiveMsgFromParent(e) {
+		
+
+		
+		var txt = document.getElementById("w3review");
+		txt.value="";
+		var oD = e.data;
+		
+		if (oD == null || oD == "" || oD==undefined )
+			return txt.value = "";
+		
+		if (typeof oD == "string") {
+			txt.value = oD;
+			//txt.value = txt.value + oD + "\n";  
+		}else {
+			for (var a in oD)
+				txt.value = txt.value + a + ":::" + oD[a] + "\n"; 			
+		}
+		if(e.data.key == "combo"){
+			setOverlayMapTypeId(e.data.value);	
+		}
+		
+	}
+	
+	// 넥사에게 메시지 전달
+	function sendMsgToParent() {
+		
+		if(!window.parent) return;
+		var txt = document.getElementById("sendtxt");
+		var msg = txt.value;
+		
+		window.parent.postMessage( msg, '*' );
+	}
+	
+	// page load 알림.
+	function fnload() {
+	
+		window.addEventListener('message', receiveMsgFromParent);
+		
+		var txt = document.getElementById("sendtxt");
+		txt.value = "PAGELOAD";	
+		
+		txt = document.getElementById("w3review");
+		txt.value = "";
+		
+		var txtObj = document.getElementById("sendObject");
+		//txtObj.value = "";
+		
+		sendMsgToParent();
+	}
+</script>
+</head>
+
+</script>
+<body onload="fnload();">
+<label>넥사에서 받는 값 :</label>
+<input id="w3review" type="text"  style="width: 400px; height:25px;"/>   
+<div id="map" style="width:500px;height:400px;"></div>
+<script>
+	
+</script>
+
+<input id="sendtxt" type="text" vaue="TEXT" style="width: 500px; height:25px;"/>   
+<input id="sendbtn" type="button" value="넥사로 전달" onclick="sendMsgToParent();" style="height:25px;"/><br><br>	
+</body>
+</html>
